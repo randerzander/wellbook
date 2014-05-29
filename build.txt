@@ -1,0 +1,75 @@
+sudo wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
+sudo yum install -y autoconf automake libtool zlib-devel libtiff-devel libicu-devel dos2unix svn gcc-c++ ImageMagick-devel apache-maven
+
+#Add mvn to the path. Good idea to add this to your .bashrc if you plan to build other maven packages, often needed to compile Hive UDFs
+export PATH=$PATH:/usr/share/apache-maven/bin
+
+#Download and build the latest libpng library -- yum only has libpng10
+wget http://prdownloads.sourceforge.net/libpng/libpng-1.2.51.tar.gz?download
+tar -xvf libpng-1.2.51\?download
+cd libpng-1.2.51
+./configure
+make
+sudo make install
+cd ..
+
+#Download and build the latest libjpeg library -- yum doesn't have it
+wget http://downloads.sourceforge.net/project/libjpeg/libjpeg/6b/jpegsr6.zip?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Flibjpeg%2Ffiles%2Flibjpeg%2F&ts=1395419736&use_mirror=softlayer-ams
+unzip jpeg*
+cd jpeg*
+#The configure script is has Windows line endings. convert them
+dos2unix configure
+./configure
+make
+#CentOS has no /usr/local/man/man1 dir. Create it
+sudo mkdir -p /usr/local/man/man1
+sudo make install
+cd ..
+
+#Download and build the latest leptonica library -- yum doesn't have it
+wget http://www.leptonica.com/source/leptonica-1.70.tar.gz
+tar -xvf leptonica-1.70.tar.gz
+cd leptonica-1.70
+./configure
+make
+sudo make install
+cd ..
+
+#Clone and build tesseract-ocr
+svn checkout http://tesseract-ocr.googlecode.com/svn/trunk/ tesseract-ocr-read-only
+cd tesseract-ocr-read-only
+./autogen.sh
+./configure
+make
+sudo make install
+cd ..
+
+#Download the english datafiles and copy them to /usr/local/share/tessdata
+wget https://tesseract-ocr.googlecode.com/files/tesseract-ocr-3.02.eng.tar.gz
+tar -xvf tesseract-ocr-3.02.eng.tar.gz
+sudo cp tesseract-ocr/tessdata/* /usr/local/share/tessdata/
+cd ..
+
+#Test that everything worked by converting a sample pdf
+#wget http://www.saronicferries.gr/content/pdfFiles/sample.pdf
+#convert -monochrome -density 300 sample.pdf image1.tiff
+#if pdfs are too large, use switches -limit memory 300MB
+#tesseract image1.tiff extract
+
+#Optional -- install pdftk for trimming irrelevant pages from pdfs
+#wget http://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/pdftk-2.02-1.el6.x86_64.rpm
+#sudo rpm -Uvh pdftk-2.02-1.el6.x86_64.rpm
+#Remove passwordless pdf encryption
+#qpdf --decrypt encrypted.pdf decrypted.pdf
+#Splits pdfs into one file per page
+#pdftk original.pdf burst
+
+#Data Science
+sudo yum install -y python-devel gcc-c++ blas-devel lapack-devel
+sudo pip install numpy pandas patsy scipy statsmodels scikit-learn
+
+#Clone and build Brickhouse UDFs
+git clone https://github.com/klout/brickhouse
+cd brickhouse
+mvn package
+cd ..
