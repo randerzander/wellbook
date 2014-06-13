@@ -1,4 +1,4 @@
-#!/usr/bin/env ./local-py/bin/python
+#!/usr/bin/python
 
 #LAS standard spec:
 #https://esd.halliburton.com/support/LSM/GGT/ProMAXSuite/ProMAX/5000/5000_8/Help/promax/las_overview.pdf
@@ -41,10 +41,9 @@ def emit(file_no, fields, rec):
   sys.stdout.write('%s\n' % (file_no + '\t' + fields.lower() + '\t' + json.dumps(rec).lower()))
 
 def process_rec(key, rec):
-  file_no = key.split('/')[1].split('-')[0]
-  sys.stderr.write('Processing rec:\n%s' % ('\n'.join(rec.split('\n')[:25])))
+  file_no = key
   fields = {}
-  for line in filter(lambda x: len(x) > 0 and x[0] != '#', rec.split('\n')): #filter out blank lines
+  for line in filter(lambda x: len(x) > 0 and x[0] != '#', rec.split('||')): #filter out blank lines
     if line[0] == '~':
       line_type = line[1]
     else: #All lines but ~A deal with metadata
@@ -53,15 +52,8 @@ def process_rec(key, rec):
       else: emit(file_no, json.dumps(fields), process_depth_entry(line, fields))
         
 
-rec = ''
-key = ''
 for line in sys.stdin:
-  if '__key' in line:
-    if rec != '': process_rec(key, rec) #just finished reading data for a file
-    key = line.split('__key')[0]
-    sys.stderr.write('Starting read of File: ' + key + '\n')
-  if '__data' in line: #just starting to read data for a file
-    rec = line.split('__data')[1]
-  else: rec += line #continuing to read data for a file
-
-if rec != '': process_rec(key, rec)
+  first_tab = line.index('\t')
+  key = line[0:first_tab]
+  rec = line[first_tab+1:]
+  if rec != '': process_rec(key, rec)
