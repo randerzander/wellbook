@@ -6,7 +6,6 @@ hadoop fs -rm -r $OUTPUTDIR
 
 hadoop jar /usr/lib/hadoop-mapreduce/hadoop-streaming-*.jar \
   -D mapred.job.reduces=0 \
-  -libjars Formats/Formats.jar \
   -inputformat org.apache.hadoop.mapred.SequenceFileAsBinaryInputFormat \
   -outputformat org.apache.hadoop.mapred.TextOutputFormat \
   -file $SCRIPT \
