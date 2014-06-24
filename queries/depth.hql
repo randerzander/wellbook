@@ -3,7 +3,31 @@ use wellbook;
 add jar /home/dev/brickhouse/target/brickhouse-0.7.0-SNAPSHOT.jar;
 source /home/dev/brickhouse/src/main/resources/brickhouse.hql;
 
-select file_no, coalesce(get_json_object(reading, '$.dept'), get_json_object(reading, '$.depth')) from logs limit 5; 
+--Get number of lasfiles per well
+select file_no, count(*) from log_metadata group by file_no;
+
+--Get deepest readings per well
+select file_no, max(coalesce(
+  get_json_object(reading, '$.dept'),
+  get_json_object(reading, '$.depth'),
+  get_json_object(reading, '$.md')
+)) from log_readings
+group by file_no;
+
+--Get # reaindgs per well
+select file_no, count(*) from log_readings group by file_no;
+
+--Get average number of readings per well
+select avg(count) from(
+  select file_no, count(*) as count from log_readings group by file_no
+) A;
+
+--Get wells with greater than average number of readings
+select file_no, count, currentoperator from (
+  select file_no, count(*) as count from log_readings group by file_no
+) A
+join wells on A.file_no = wells.file_no
+where count > 48000;
 
 --north dakota data lake query
 --merges master well-header data, production data, and all well-logs per well

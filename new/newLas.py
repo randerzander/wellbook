@@ -5,6 +5,9 @@
 
 import sys, json
 
+log = sys.stderr
+output = sys.stdout
+
 def process_field(line_type, line, fields):
   if line[0] == '.': line = line[1:] #remove leading '.'s
   
@@ -38,22 +41,22 @@ def process_depth_entry(line, fields):
   return depth
 
 def emit(file_no, fields, rec):
-  sys.stdout.write('%s\n' % (file_no + '\t' + fields.lower() + '\t' + json.dumps(rec).lower()))
+  output.write('%s\n' % (file_no + '\t' + fields.lower() + '\t' + json.dumps(rec).lower()))
 
-def process_rec(key, rec):
-  file_no = key
+def process_rec(file_no, rec):
   fields = {}
-  for line in filter(lambda x: len(x) > 0 and x[0] != '#', rec.split('||')): #filter out blank lines
+  for line in filter(lambda x: len(x) > 0 and x[0] != '#', rec.split('\n')): #filter out blank lines
     if line[0] == '~':
       line_type = line[1]
     else: #All lines but ~A deal with metadata
-      sys.stderr.write('Handling: ' + line)
+      #log.write('Handling: ' + line)
       if line_type != 'A': process_field(line_type, line, fields)
       else: emit(file_no, json.dumps(fields), process_depth_entry(line, fields))
         
 
-for line in sys.stdin:
-  first_tab = line.index('\t')
-  key = line[0:first_tab]
-  rec = line[first_tab+1:]
-  if rec != '': process_rec(key, rec)
+input = sys.stdin.read()
+first_tab = input.index('\t')
+file_no = input[0:first_tab]
+rec = input[first_tab+1:]
+output.write(rec)
+if rec != '': process_rec(file_no, rec)
