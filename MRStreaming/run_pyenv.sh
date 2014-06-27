@@ -14,6 +14,3 @@ hadoop jar /usr/lib/hadoop-mapreduce/hadoop-streaming-*.jar \
   -input $INPUTDIR/* \
   -output $OUTPUTDIR/ \
   -cacheArchive $ENV#local-py
-
-  #-inputformat org.apache.hadoop.mapred.TextInputFormat \
-  #-D mapred.job.reduces=0 \

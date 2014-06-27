@@ -1,9 +1,9 @@
 use wellbook;
 
-add jar /home/dev/brickhouse/target/brickhouse-0.7.0-SNAPSHOT.jar;
-source /home/dev/brickhouse/src/main/resources/brickhouse.hql;
+add jar /home/dev/udfs/brickhouse/target/brickhouse-0.7.0-SNAPSHOT.jar;
+source /home/dev/udfs/brickhouse/src/main/resources/brickhouse.hql;
 
---Get number of lasfiles per well
+--Get number of logfiles per well
 select file_no, count(*) from log_metadata group by file_no;
 
 --Get deepest readings per well
@@ -38,11 +38,18 @@ join (
     collect(inner.reading) as readings
   from (
     select
-      logs.file_no,
-      logs.reading,
-      coalesce(get_json_object(logs.reading, '$.dept'), get_json_object(logs.reading, '$.depth')) as depth
+      log_readings.file_no,
+      log_readings.reading,
+      coalesce(
+        get_json_object(log_readings.reading, '$.dept'),
+        get_json_object(log_readings.reading, '$.depth'),
+        get_json_object(log_readings.reading, '$.md')
+      ) as depth
     from logs
-    order by coalesce(get_json_object(logs.reading, '$.dept'), get_json_object(logs.reading, '$.depth')) asc
+    order by coalesce(
+      get_json_object(log_readings.reading, '$.dept'),
+      get_json_object(log_readings.reading, '$.depth'),
+      get_json_object(log_readings.reading, '$.md')) asc
   ) inner
   join wells on inner.file_no = wells.file_no
   group by wells.file_no
@@ -56,12 +63,12 @@ join (
 ) production on wells.file_no = production.file_no;
 
 --query for readings within arbitrary depth range
-select * from logs
-join wells on logs.file_no = wells.file_no
+select * from log_readings
+join wells on log_readings.file_no = wells.file_no
   where
-    coalesce(get_json_object(reading, '$.dept'), get_json_object(reading, '$.depth')) > 1000
+    coalesce(get_json_object(reading, '$.dept'), get_json_object(reading, '$.depth'), get_json_object(reading, '$.md')) > 1000
     AND
-    coalesce(get_json_object(reading, '$.dept'), get_json_object(reading, '$.depth')) < 10000
+    coalesce(get_json_object(reading, '$.dept'), get_json_object(reading, '$.depth'), get_json_object(reading, '$.md')) < 10000
 ;
 
 --yet to come: merge/order/interpolate/step all readings into standard units

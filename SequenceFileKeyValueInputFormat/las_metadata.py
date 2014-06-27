@@ -3,10 +3,8 @@
 #LAS standard spec:
 #https://esd.halliburton.com/support/LSM/GGT/ProMAXSuite/ProMAX/5000/5000_8/Help/promax/las_overview.pdf
 
-import sys, json
-
-log = sys.stderr
-output = sys.stdout
+import json
+import recordhelper as helper
 
 def process_metadata(block_type, line, fields):
   cleansed = ''
@@ -16,7 +14,7 @@ def process_metadata(block_type, line, fields):
     else: cleansed += char
   line = cleansed
   
-  for char in line: log.write('Cleansed: ' + line)
+  for char in line: helper.log('Cleansed: ' + line)
 
   if line[0] == '.': line = line[1:] #remove leading '.'s
   
@@ -46,10 +44,11 @@ def process_metadata(block_type, line, fields):
     if 'cib_order' in fields: fields['cib_order'].append(name)
     else: fields['cib_order'] = [name]
 
-def emit(filename, fields): output.write('%s\n' % (filename + '\t' + json.dumps(fields).lower()))
+def emit(filename, fields): helper.output('%s\n' % (filename + '\t' + json.dumps(fields).lower()))
 
 def process_rec(filename, rec):
-  log.write('Parsing filename: %s\n' % (filename))
+  helper.log('Parsing filename: %s\n' % (filename))
+  rec = rec[rec.index('~'):].strip()
   fields = {}
   #filters blank lines, and lines starting with #
   for line in filter(lambda x: len(x) > 0 and x[0] != '#', rec.split('\n')):
@@ -66,7 +65,4 @@ def parse_filename(text):
   log_type = fn.split('-')[1].split('.las')[0]
   return '\t'.join([fn, file_no, log_type])
 
-def strip_rec(rec): return rec[rec.index('~'):].strip()
-
-input = sys.stdin.read()
-process_rec(parse_filename(input), input[input.index('\t')+1:])
+helper.process_records(process_rec, parse_filename, '__key')

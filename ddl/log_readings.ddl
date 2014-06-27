@@ -9,7 +9,7 @@ create external table if not exists wellbook.tmp(
 )
 row format delimited fields terminated by '\t'
 lines terminated by '\n'
-location '/user/dev/wellbook/log-readings/';
+location '/user/dev/wellbook/log_readings/';
 
 drop table if exists wellbook.log_readings;
 create table wellbook.log_readings like wellbook.tmp;

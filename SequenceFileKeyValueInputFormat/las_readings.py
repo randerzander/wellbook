@@ -3,13 +3,11 @@
 #LAS standard spec:
 #https://esd.halliburton.com/support/LSM/GGT/ProMAXSuite/ProMAX/5000/5000_8/Help/promax/las_overview.pdf
 
-import sys, json
-
-log = sys.stderr
-output = sys.stdout
+import json
+import recordhelper as helper
 
 def process_metadata(block_type, line, fields):
-  log.write('Meta: ' + line)
+  helper.log('Meta: ' + line)
   if line[0] == '.': line = line[1:] #remove leading '.'s
 
   if block_type != 'C': return
@@ -27,10 +25,11 @@ def process_depth_entry(line, fields):
   for idx, reading in enumerate(line.split()): depth[fields['cib_order'][idx]] = reading
   return depth
 
-def emit(filename, rec): output.write('%s\n' % (filename+ '\t' + json.dumps(rec).lower()))
+def emit(filename, rec): helper.output('%s\n' % (filename+ '\t' + json.dumps(rec).lower()))
 
 def process_rec(filename, rec):
-  log.write('Parsing filename: %s\n' % (filename))
+  rec = rec[rec.index('~'):].strip()
+  helper.log('Parsing filename: %s\n' % (filename))
   fields = {}
   #filters blank lines, and lines starting with #
   for line in filter(lambda x: len(x) > 0 and x[0] != '#', rec.split('\n')):
@@ -45,7 +44,4 @@ def parse_filename(text):
   log_type = fn.split('-')[1].split('.las')[0]
   return '\t'.join([fn, file_no, log_type])
  
-def strip_rec(rec): return rec[rec.index('~'):].strip()
-
-input = sys.stdin.read()
-process_rec(parse_filename(input), input[input.index('\t')+1:])
+helper.process_records(process_rec, parse_filename, '__key')

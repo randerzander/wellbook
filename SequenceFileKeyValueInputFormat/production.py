@@ -1,6 +1,6 @@
-#!./devenv/bin/python
+#!./pyenv/bin/python
 from pyquery import PyQuery as pq
-import sys
+import recordhelper as helper
 
 def extract_fields(fields, text):
   vals = []
@@ -11,14 +11,16 @@ def extract_fields(fields, text):
   return vals
 
 #Print tab separated list of fields concatted with array of extracted cell values
-def emit(fields, cells): sys.stdout.write('%s\n' % ('\t'.join(fields + [cell.text_content() for cell in cells])))
+def emit(fields, cells): helper.output('%s\n' % ('\t'.join(fields + [cell.text_content() for cell in cells])))
 
-def process_rec(rec):
+def process_rec(key, rec):
   if 'Vent/Flare' in rec:
     fields = extract_fields(['File No', 'Perfs', 'Spacing', 'Total Depth'], pq(rec).text())
     cells = pq(rec)('table').eq(2)('td')
     #Split each 9 cell values into one row and emit record
     [emit(fields, record) for record in [cells[x:x+9] for x in xrange(0, len(cells), 9)]]
 
+def parse_key(text): return text.split()[0]
+
 #read all of input and run it through process_rec
-process_rec(sys.stdin.read())
+helper.process_records(process_rec, parse_key, '__key')
