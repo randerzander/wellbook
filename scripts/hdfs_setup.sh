@@ -1,12 +1,8 @@
 hadoop fs -mkdir -p wellbook
-
-tar -xvf production-raw.tar.gz
-hadoop fs -put production-raw wellbook/
-
-tar -xvf injections-raw.tar.gz
-hadoop fs -put injections-raw wellbook/
-
-hadoop fs -mkdir -p wellbook/las-raw
-cat las* > las.tgz
-tar -xvf las.tgz
-hadoop fs -put las/* wellbok/las-raw/
+cat las_raw.tgz.part* > las_raw.tgz
+#This will take awhile
+tar -xvf las_raw.tgz
+tar -xvf production_raw.tgz
+tar -xvf injections_raw.tgz
+tar -xvf wells_raw.tgz
+hadoop fs -put *_raw wellbook/

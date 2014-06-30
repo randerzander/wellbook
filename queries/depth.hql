@@ -7,11 +7,11 @@ source /home/dev/udfs/brickhouse/src/main/resources/brickhouse.hql;
 select file_no, count(*) from log_metadata group by file_no;
 
 --Get deepest readings per well
-select file_no, max(coalesce(
+select file_no, max(cast(coalesce(
   get_json_object(reading, '$.dept'),
   get_json_object(reading, '$.depth'),
   get_json_object(reading, '$.md')
-)) from log_readings
+) as double)) from log_readings
 group by file_no;
 
 --Get # reaindgs per well
@@ -64,11 +64,8 @@ join (
 
 --query for readings within arbitrary depth range
 select * from log_readings
-join wells on log_readings.file_no = wells.file_no
   where
-    coalesce(get_json_object(reading, '$.dept'), get_json_object(reading, '$.depth'), get_json_object(reading, '$.md')) > 1000
-    AND
-    coalesce(get_json_object(reading, '$.dept'), get_json_object(reading, '$.depth'), get_json_object(reading, '$.md')) < 10000
+    cast(coalesce(get_json_object(reading, '$.dept'), get_json_object(reading, '$.depth'), get_json_object(reading, '$.md')) as double) > 100000
 ;
 
 --yet to come: merge/order/interpolate/step all readings into standard units

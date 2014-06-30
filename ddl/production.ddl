@@ -1,3 +1,4 @@
+create database if not exists wellbook;
 use wellbook;
 
 drop table if exists wellbook.tmp;
@@ -17,11 +18,4 @@ create external table if not exists wellbook.tmp(
  vent_flare double
 )
 row format delimited fields terminated by '\t'
-lines terminated by '\n'
-location '/user/dev/wellbook/production-parsed/';
-
-drop table if exists wellbook.production;
-create table wellbook.production like wellbook.tmp;
-alter table production set fileformat orc;
-insert into table wellbook.production select * from wellbook.tmp;
-drop table wellbook.tmp;
+lines terminated by '\n';

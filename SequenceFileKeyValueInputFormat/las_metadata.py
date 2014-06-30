@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!./pyenv/bin/python
 
 #LAS standard spec:
 #https://esd.halliburton.com/support/LSM/GGT/ProMAXSuite/ProMAX/5000/5000_8/Help/promax/las_overview.pdf
@@ -60,7 +60,7 @@ def process_rec(filename, rec):
         return
         
 def parse_filename(text):
-  fn = text.split('__key')[1].split('.las')[0] + '.las'
+  fn = text.split('\t')[0]
   file_no = fn.split('/')[1].split('-')[0]
   log_type = fn.split('-')[1].split('.las')[0]
   return '\t'.join([fn, file_no, log_type])

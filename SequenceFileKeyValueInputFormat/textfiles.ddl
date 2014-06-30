@@ -1,18 +1,21 @@
 use wellbook;
 
-add jar /home/dev/SequenceFileKeyValueInputFormat/target/SequenceFileKeyValueInputFormat-0.1.0-SNAPSHOT.jar;
+add jar ~/SequenceFileKeyValueInputFormat/target/SequenceFileKeyValueInputFormat-0.1.0-SNAPSHOT.jar;
+add file ~/pyenv;
 add file ${hiveconf:SCRIPT};
-
-!echo ${hiveconf:SCRIPT};
-!echo ${hiveconf:SOURCE};
-!echo ${hiveconf:COLUMNS};
 
 drop table if exists textfiles;
 create external table if not exists textfiles(filename string, text string)
 stored as inputformat 'com.github.randerzander.SequenceFileKeyValueInputFormat'
 outputformat 'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
-location '/user/dev/${hiveconf:SOURCE}';
+location '/user/dev/stage/';
 
-insert overwrite table log_readings
+insert overwrite table tmp
 select transform(filename, text) using '${hiveconf:SCRIPT}' as ${hiveconf:COLUMNS}
 from textfiles;
+
+drop table if exists ${hiveconf:TARGET};
+create table ${hiveconf:TARGET} like wellbook.tmp;
+alter table ${hiveconf:TARGET} set fileformat orc;
+insert into table ${hiveconf:TARGET} select * from wellbook.tmp;
+drop table wellbook.tmp;

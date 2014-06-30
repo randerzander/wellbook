@@ -1,3 +1,4 @@
+create database if not exists wellbook;
 use wellbook;
 
 drop table if exists wellbook.tmp;
@@ -12,11 +13,4 @@ create external table if not exists wellbook.tmp(
   average_psi double
 )
 row format delimited fields terminated by '\t'
-lines terminated by '\n'
-location '/user/dev/wellbook/injections-parsed/';
-
-drop table if exists wellbook.injections;
-create table wellbook.injections like wellbook.tmp;
-alter table injections set fileformat orc;
-insert into table wellbook.injections select * from wellbook.tmp;
-drop table wellbook.tmp;
+lines terminated by '\n';

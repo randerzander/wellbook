@@ -17,7 +17,8 @@ git clone https://github.com/randerzander/wellbook
 #Prereqs
 sudo wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
 sudo yum groupinstall -y 'development tools'
-sudo yum install -y python-devel libxslt-devel apache-maven
+#libxslt-devel needs to be installed on all datanodes, python-devel, apache-maven, and mahout just need to be installed on an edgenode
+sudo yum install -y python-devel libxslt-devel apache-maven mahout
 
 #Download and install virtualenv
 wget https://bootstrap.pypa.io/ez_setup.py
@@ -26,11 +27,12 @@ sudo easy_install pip
 sudo pip install virtualenv
 
 #Create a relocatable Python virtualenv
-virtualenv --relocatable pyenv
+virtualenv pyenv
 source pyenv/bin/activate
 pip install pyquery
 cp ~/wellbook/lib/recordhelper.py ~/pyenv/lib/python2.6/site-packages/
 deactivate
+virtualenv --relocatable pyenv
 
 #Download and build the custom Hive InputFormat
 git clone https://github.com/randerzander/SequenceFileKeyValueInputFormat
@@ -44,18 +46,21 @@ mv brickhouse ~/udfs/
 cd ~/udfs/brickhouse
 mvn package
 
+git clone https://github.com/Esri/spatial-framework-for-hadoop
+mv spatial-framework-for-hadoop ~/udfs/
+cd ~/udfs/spatial-framework-for-hadoop
+mvn package
+
 #Download and build necessary Hive SerDes
 mkdir ~/serdes
 git clone https://github.com/ogrodnek/csv-serde
 mv csv-serde ~/serdes/
-cs ~/serdes/csv-serde
+cd ~/serdes/csv-serde
 mvn package
 
 cd ~/
+#Sets up HDFS folder structure
 sh ~/wellbook/scripts/hdfs_setup.sh
+#Sets up Hive tables
+sh ~/wellbook/scripts/hive_setup.sh
 ```
-
-Populate Production Table:
-```
-hive -e 'create database if not exists wellbook;'
-hive -f wellbook/SequenceFileKeyValueInputFormat/job.hql

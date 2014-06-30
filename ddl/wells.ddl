@@ -1,3 +1,4 @@
+create database if not exists wellbook;
 use wellbook;
 
 add jar /home/dev/serdes/csv-serde/target/csv-serde-1.1.2-0.11.0-all.jar;
@@ -34,8 +35,7 @@ create external table if not exists wellbook.tmp (
 )
 row format serde 'com.bizo.hive.serde.csv.CSVSerde'
 stored as textfile
-location '/user/dev/wellbook/wells-raw/'
-;
+location '/user/dev/wellbook/wells_raw/';
 
 drop table if exists wellbook.wells;
 create table wellbook.wells like wellbook.tmp;
