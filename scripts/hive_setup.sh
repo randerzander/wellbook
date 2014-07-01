@@ -26,20 +26,20 @@ echo Converting las files to SequenceFiles
 #mahout seqdirectory -i wellbook/las_raw -o stage -prefix __key -ow
 
 echo Creating log_metadata table
-#hive -f ~/wellbook/ddl/log_metadata.ddl
+hive -f ~/wellbook/ddl/log_metadata.ddl
 echo Populating log_metadata table
-#hive -f job.hql \
-#	-hiveconf SCRIPT=las_metadata.py \
-#	-hiveconf COLUMNS=filename,file_no,log_name,metadata \
-#	-hiveconf TARGET=log_metadata
+hive -f job.hql \
+	-hiveconf SCRIPT=new_meta.py \
+	-hiveconf COLUMNS=filename,file_no,log_name,metadata \
+	-hiveconf TARGET=log_metadata
 
-#echo -e "\a"
+echo -e "\a"
 
 echo Creating log_readings table
 hive -f ~/wellbook/ddl/log_readings.ddl
 echo Populating log_readings table
 hive -f job.hql \
-	-hiveconf SCRIPT=las_readings.py \
+	-hiveconf SCRIPT=new_read.py \
 	-hiveconf COLUMNS=filename,file_no,log_name,reading \
 	-hiveconf TARGET=log_readings
 
