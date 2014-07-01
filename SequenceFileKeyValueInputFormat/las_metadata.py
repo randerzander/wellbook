@@ -11,11 +11,10 @@ def process_metadata(block_type, line, fields):
   for char in line:
     if str(hex(ord(char))) == '0xb5': cleansed += 'micro'
     elif str(hex(ord(char))) == '0xb0': cleansed += 'degree'
+    elif str(hex(ord(char))) == '0xc2': cleansed += ''
     else: cleansed += char
   line = cleansed
   
-  for char in line: helper.log('Cleansed: ' + line)
-
   if line[0] == '.': line = line[1:] #remove leading '.'s
   
   if block_type == 'O':
@@ -27,11 +26,15 @@ def process_metadata(block_type, line, fields):
 
   #parse field metadata
   name = line.split('.')[0].strip()
-  UOM = line.split('.')[1].split(' ')[0].strip()
+  UOM = ''
+  if '.' in line: UOM = line.split('.')[1].split(' ')[0].strip()
+  else: helper.log('No . in line: %s\n' % (line))
   if UOM == '': val = ' '.join(line.split('.')[1:]).strip().split(':')[0].strip()
   else: val = ' '.join(line.split(UOM)[1:]).strip().split(':')[0].strip()
 
-  desc = line.split(':')[1].strip().replace('\t', ' ').replace('  ', ' ')
+  desc = ''
+  if ':' in line: desc = line.split(':')[1].strip().replace('\t', ' ').replace('  ', ' ')
+  else: helper.log('No : in line: %s\n' % (line))
   field = {}
   if val != '': field['val'] = val
   if UOM != '': field['UOM'] = UOM
@@ -47,11 +50,13 @@ def process_metadata(block_type, line, fields):
 def emit(filename, fields): helper.output('%s\n' % (filename + '\t' + json.dumps(fields).lower()))
 
 def process_rec(filename, rec):
-  helper.log('Parsing filename: %s\n' % (filename))
+  if '~' not in rec:
+    helper.log('No proper start of record for %s\n' % (filename))
+    return
   rec = rec[rec.index('~'):].strip()
   fields = {}
   #filters blank lines, and lines starting with #
-  for line in filter(lambda x: len(x) > 0 and x[0] != '#', rec.split('\n')):
+  for line in filter(lambda x: len(x.strip()) >= 1 and x.strip()[0] != '#', rec.split('\n')):
     if line[0] == '~': block_type = line[1]
     else: #All lines but ~A deal with metadata
       if block_type != 'A': process_metadata(block_type, line, fields)
