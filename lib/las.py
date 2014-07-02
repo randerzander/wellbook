@@ -6,14 +6,14 @@ def parse_metadata(lines):
   for line in lines:
     #helper.log(line + '\n')
     if line[0] == '#':
-      metadata['comments'].append(line)
+      #metadata['comments'].append(line)
       continue
     if line[0] == '~':
       block_type = line[1]
       continue
     if block_type in comment_blocks:
-      if block_type in metadata: metadata[block_type].append(line)
-      else: metadata[block_type] = [line]
+      #if block_type in metadata: metadata[block_type].append(line)
+      #else: metadata[block_type] = [line]
       continue
 
     mnemonic = line.split('.')[0].strip() #mnem goes until first .

@@ -19,12 +19,15 @@ def process_record(filename, record):
   ))
 
   curves_per_step = len(metadata['curveAliases'])
+  #helper.log(json.dumps(metadata) + '\n')
   step = {}
-  for line in halves[1].split('\n'):
-    if len(line.split()) != curves_per_step:
-      helper.log(filename + ': mismatch in readings per line: ' + line + '\n')
-    for token, idx in enumerate(line.split()):
-      if idx < curves_per_step: step[metadata['curveAliases'][idx]] = token
+  for line in halves[1].split('\n')[1:]:
+    #if len(line.split()) != curves_per_step:
+      #helper.log(filename + ': readings per line mismatch: ' + line + '\n')
+    #TODO deal with multiline steps
+    for idx, token in enumerate(line.split()):
+      if idx < curves_per_step and token != metadata['W']['NULL']['value']:
+        step[metadata['curveAliases'][idx]] = token
     helper.output('%s\t%s\n' % (filename, json.dumps(step).lower()))
  
 helper.process_records(process_record, las.parse_filename, '__key')
