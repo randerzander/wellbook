@@ -3,7 +3,7 @@ use wellbook;
 
 drop table if exists wellbook.tmp;
 create external table if not exists wellbook.tmp(
-  file_name string,
+  filename string,
   file_no int,
   log_name string,
   reading string

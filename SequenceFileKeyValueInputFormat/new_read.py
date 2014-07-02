@@ -12,16 +12,19 @@ def process_record(filename, record):
     return
   record = record[record.index('~'):].strip()
   #filters blank lines, and lines starting with #
-  metadata = las.parse_metadata(filter(lambda x: len(x.strip()) >= 1 and x.strip()[0] != '#', record.split('~A')[0]))
-  for readingText in record.split('~A')[1].split('\n'):
-    reading = {}
-    if line.count(':') >= 1: #timestamps don't split well
-      reading[curveAliases[0]] = readingText[0:20] 
-      readingText = readingText[21:].strip()
-    elif len(line.split()) != len(emptyReading):
-      helper.log(filename + ': fieldcount issue: ' + readingText)
-      return
-    for reading,idx in enumerate(readingText.split()): reading[curveAliases[idx]] = reading
-    if reading != None: helper.output('%s\n' % (filename + '\t' + json.dumps(reading).lower()))
+  halves = record[record.index('~'):].strip().split('~A')
+  metadata = las.parse_metadata(\
+    (las.sanitize(line.strip('.').strip()) for line in\
+      filter(lambda x: len(x.strip()) >= 1 and x.strip()[0] not in ['-'], halves[0].split('\n'))\
+  ))
+
+  curves_per_step = len(metadata['curveAliases'])
+  step = {}
+  for line in halves[1].split('\n'):
+    if len(line.split()) != curves_per_step:
+      helper.log(filename + ': mismatch in readings per line: ' + line + '\n')
+    for token, idx in enumerate(line.split()):
+      if idx < curves_per_step: step[metadata['curveAliases'][idx]] = token
+    helper.output('%s\t%s\n' % (filename, json.dumps(step).lower()))
  
 helper.process_records(process_record, las.parse_filename, '__key')

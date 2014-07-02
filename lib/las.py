@@ -1,24 +1,40 @@
+import recordhelper as helper
+
+comment_blocks = ['P', 'O']
 def parse_metadata(lines):
-  metadata = {'curveAliases': []}
+  metadata = {'curveAliases': [], 'comments': []}
   for line in lines:
-    line = sanitize(line)
-    if line[0] == '.': line = line[1:] #remove leading '.'s
+    #helper.log(line + '\n')
+    if line[0] == '#':
+      metadata['comments'].append(line)
+      continue
     if line[0] == '~':
       block_type = line[1]
-      metadata[block_type] = {}
-    tokens = line.split()
-    name = tokens[0].split('.')[0]
-    if '.' in tokens[0]: UOM = tokens[0].split('.')[1]
-    colon_seen = False
-    value = ''
-    description = ''
-    for token in tokens[1:]:
-      if token != ':' and not colon_seen: value = value + ' ' + token
-      elif token == ':': colon_seen = True
-      else: description = description + ' ' + token
+      continue
+    if block_type in comment_blocks:
+      if block_type in metadata: metadata[block_type].append(line)
+      else: metadata[block_type] = [line]
+      continue
 
-    metadata[block_type][name] = {'UOM': UOM, 'description': description}
-    if block_type == 'C': metadata['curveAliases'].append(name)
+    mnemonic = line.split('.')[0].strip() #mnem goes until first .
+    field = {}
+    if line.split('.')[1][0].strip() != '': #if there's a char following the first period..
+      UOM = line.split('.')[1].split()[0].strip() #UOM is after first period
+      value = line.split(UOM)[1].split(':')[0].strip() #Value is after UOM, before :
+      field['UOM'] = UOM
+    else: value = '.'.join(line.split('.')[1:]).split(':')[0].strip() #value can have .s in it
+    description = line.split(':')[1].strip() #Description is after :
+
+    if mnemonic == '': #if we don't have a field name or description, drop this line
+      if description == '': continue
+      else: mnemonic = description
+
+    if block_type not in metadata: metadata[block_type] = {}
+    if value != '': field['value'] = value
+    field['description'] = description
+    metadata[block_type][mnemonic] = field
+
+    if block_type == 'C': metadata['curveAliases'].append(mnemonic)
   return metadata
 
 def sanitize(line):

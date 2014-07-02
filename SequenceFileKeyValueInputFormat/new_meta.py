@@ -17,8 +17,11 @@ def process_record(filename, record):
   if '~' not in record:
     helper.log('No proper start of record for %s\n' % (filename))
     return
-  record = record[record.index('~'):].strip()
-  metadata = las.parse_metadata(filter(lambda x: len(x.strip()) >= 1 and x.strip()[0] != '#', record.split('~A')[0]))
+  halves = record[record.index('~'):].strip().split('~A')
+  metadata = las.parse_metadata( \
+    (las.sanitize(line.strip('.').strip()) for line in \
+      filter(lambda x: len(x.strip()) >= 1 and x.strip()[0] not in ['-'], halves[0].split('\n')) \
+  ))
   helper.output('%s\n' % (filename + '\t' + json.dumps(metadata).lower()))
 
 helper.process_records(process_record, las.parse_filename, '__key')
