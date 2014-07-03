@@ -14,7 +14,7 @@ def process_record(filename, record):
   metadata = las.parse_metadata(\
     las.sanitize(line.strip('.').strip()) for line in las.filter_lines(halves[0], ['-'])\
   )
-  if 'curveAliases' not in metadata:
+  if len(metadata['curveAliases']) < 1:
     helper.log(filename + ': improperly formatted metadata block')
     return
 
