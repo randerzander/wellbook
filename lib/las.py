@@ -3,7 +3,7 @@ import recordhelper as helper
 #filters blank lines, and lines starting with characters in filter_chars
 def filter_lines(text, filter_chars):
   return filter(
-     lambda x: len(x.strip()) >= 1 and x.strip()[0] not in filter_chars,\
+     lambda x: len(x.strip()) > 1 and x.strip()[0] not in filter_chars,\
      text.split('\n')\
    )
 
@@ -11,7 +11,7 @@ def parse_metadata(lines):
   comment_blocks = ['O']
   metadata = {'curveAliases': [], 'comments': []}
   for line in lines:
-    #helper.log(line + '\n')
+    helper.log(line + '\n')
     if line[0] == '#':
       #metadata['comments'].append(line)
       continue
