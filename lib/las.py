@@ -64,8 +64,6 @@ def sanitize(line):
 def parse_filename(text):
   fn = text.split('\t')[0].replace('..', '.')
   file_no = fn.split('/')[1].split('-')[0]
-  try:
-    log_type = fn.split('-')[1].split('.las')[0]
-  except:
-    helper.log(text + ': ' + fn + ' : ' + file_no + '\n')
+  if '-' in line: log_type = fn.split('-')[1].split('.las')[0]
+  else: log_type = ''
   return fn + '\t' + file_no + '\t' + log_type
