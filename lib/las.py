@@ -62,6 +62,7 @@ def sanitize(line):
   return cleansed
 
 def parse_filename(text):
+  text = text.replace('..', '.')
   fn = text.split('\t')[0]
   file_no = fn.split('/')[1].split('-')[0]
   log_type = fn.split('-')[1].split('.las')[0]
