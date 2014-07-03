@@ -11,7 +11,7 @@ def parse_metadata(lines):
   comment_blocks = ['O']
   metadata = {'curveAliases': [], 'comments': []}
   for line in lines:
-    helper.log(line + '\n')
+    #helper.log(line + '\n')
     if line[0] == '#':
       #metadata['comments'].append(line)
       continue
