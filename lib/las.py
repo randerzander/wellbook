@@ -53,10 +53,9 @@ def parse_metadata(lines):
 
 def sanitize(line):
   cleansed = ''
+  replace_map = {'0xb5': 'micro', '0xb0': 'degree', '0xc2': '', '0xe0': '', '0xff': ''}
   for char in line:
-    if str(hex(ord(char))) == '0xb5': cleansed += 'micro'
-    elif str(hex(ord(char))) == '0xb0': cleansed += 'degree'
-    elif str(hex(ord(char))) == '0xc2': cleansed += ''
+    if str(hex(ord(char))) in replace_map: cleansed += replace_map[str(hex(ord(char)))]
     else: cleansed += char
   return cleansed
 
