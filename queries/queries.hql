@@ -68,6 +68,7 @@ select * from log_readings
     cast(coalesce(get_json_object(reading, '$.dept'), get_json_object(reading, '$.depth'), get_json_object(reading, '$.md')) as double) > 100000
 ;
 
+--get list of mnemonics and their filenames
   select log_metadata.file_no, lv.mnemonic, count(*)
   from log_metadata
   lateral view explode(
