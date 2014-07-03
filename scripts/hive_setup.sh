@@ -5,6 +5,7 @@ echo Converting production data to SequenceFiles
 #mahout seqdirectory -i wellbook/production_raw -o stage -prefix __key -ow
 echo Creating production table
 #hive -f ~/wellbook/ddl/production.ddl
+cp wellbook/lib/* ~/pyenv/lib/python2.6/site-packages/
 cd wellbook/SequenceFileKeyValueInputFormat
 echo Populating production table
 #hive -f job.hql \

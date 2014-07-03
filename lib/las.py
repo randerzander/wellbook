@@ -24,18 +24,21 @@ def parse_metadata(lines):
       continue
 
     field = {}
+    #helper.log(line + '\n')
     if ':' not in line: mnemonic = line.strip()
     elif '.' not in line: #if no period, no UOM. value is from end of first word to :
       mnemonic = line.split()[0].strip()
       value = line.split(mnemonic)[1].split(':')[0].strip()
     else:
-      mnemonic = line.split('.')[0].strip() #mnem goes until first .
-      if line.split('.')[1][0].strip() != '': #if there's a char following the first period..
-        UOM = line.split('.')[1].split()[0].strip() #UOM is after first period
-        value = line.split(UOM)[1].split(':')[0].strip() #Value is after UOM, before :
-        field['UOM'] = UOM
-      else: value = '.'.join(line.split('.')[1:]).split(':')[0].strip() #value can have .s in it
-      description = line.split(':')[1].strip() #Description is after :
+      if '..' in line: mnemonic = line.split(':')[0].strip()
+      else:
+        mnemonic = line.split('.')[0].strip() #mnem goes until first .
+        if line.split('.')[1][0].strip() != '': #if there's a char following the first period..
+          UOM = line.split('.')[1].split()[0].strip() #UOM is after first period
+          value = line.split(UOM)[1].split(':')[0].strip() #Value is after UOM, before :
+          field['UOM'] = UOM
+        else: value = '.'.join(line.split('.')[1:]).split(':')[0].strip() #value can have .s in it
+        description = line.split(':')[1].strip() #Description is after :
 
     if mnemonic == '': #if we don't have a field name or description, drop this line
       if description == '': continue
@@ -56,7 +59,7 @@ def sanitize(line):
     elif str(hex(ord(char))) == '0xb0': cleansed += 'degree'
     elif str(hex(ord(char))) == '0xc2': cleansed += ''
     else: cleansed += char
-  return cleansed.replace('..', '.')
+  return cleansed
 
 def parse_filename(text):
   fn = text.split('\t')[0]
