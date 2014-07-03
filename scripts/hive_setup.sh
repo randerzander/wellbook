@@ -19,18 +19,18 @@ function populate_table(){
 }
 
 message 'Creating wells table'
-hive -f ~/wellbook/ddl/wells.ddl &
+#hive -f ~/wellbook/ddl/wells.ddl &
 
 cd ~/wellbook/SequenceFileKeyValueInputFormat
-workflow production production.py file_no,perfs,spacing,total_depth,pool,date,days,bbls_oil,runs,bbls_water,mcd_prod,mcf_sold,vent_flare &
-workflow injections injections.py file_no,uic_number,pool,date,eor_bbls_injected,eor_mcf_injected,bbls_salt_water_disposed,average_psi &
+#workflow production production.py file_no,perfs,spacing,total_depth,pool,date,days,bbls_oil,runs,bbls_water,mcd_prod,mcf_sold,vent_flare &
+#workflow injections injections.py file_no,uic_number,pool,date,eor_bbls_injected,eor_mcf_injected,bbls_salt_water_disposed,average_psi &
 
 message 'Converting las files to SequenceFiles'
-mahout seqdirectory -i wellbook/las_raw -o stage_las -prefix __key -ow
+#mahout seqdirectory -i wellbook/las_raw -o stage_las -prefix __key -ow
 
 message 'Creating log_metadata table'
-hive -f ~/wellbook/ddl/log_metadata.ddl
-populate_table log_metadata las_metadata.py filename,file_no,log_name,metadata las
+#hive -f ~/wellbook/ddl/log_metadata.ddl
+#populate_table log_metadata las_metadata.py filename,file_no,log_name,metadata las
 message 'Creating log_readings table'
-hive -f ~/wellbook/ddl/log_readings.ddl
+#hive -f ~/wellbook/ddl/log_readings.ddl
 populate_table log_readings las_readings.py filename,file_no,log_name,reading las
