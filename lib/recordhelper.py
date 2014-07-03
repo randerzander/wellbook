@@ -11,7 +11,7 @@ def process_records(process_record, parse_key, key_prefix):
       if rec != '': process_record(key, rec)
       gc.collect()
       if key_prefix != '': key = parse_key(line.split(key_prefix)[1])
-      else key = parse_key(line)
+      else: key = parse_key(line)
       
       rec = line[line.index('\t')+1:]
     else: rec += line

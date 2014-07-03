@@ -18,14 +18,16 @@ def parse_metadata(lines):
     if line[0] == '~':
       block_type = line[1]
       continue
-    if block_type in comment_blocks: #TODO allow comments
-      #if block_type in metadata: metadata[block_type].append(line)
-      #else: metadata[block_type] = [line]
+    if block_type in comment_blocks:
+      if block_type in metadata: metadata[block_type].append(line)
+      else: metadata[block_type] = [line]
       continue
 
     mnemonic = line.split('.')[0].strip() #mnem goes until first .
     field = {}
-    if line.split('.')[1][0].strip() != '': #if there's a char following the first period..
+    if '.' not in line: #if no period, no UOM. value is from end of first word to :
+      value = ' '.join(line.split()[1:]).split(':')[0].strip()
+    elif line.split('.')[1][0].strip() != '': #if there's a char following the first period..
       UOM = line.split('.')[1].split()[0].strip() #UOM is after first period
       value = line.split(UOM)[1].split(':')[0].strip() #Value is after UOM, before :
       field['UOM'] = UOM
