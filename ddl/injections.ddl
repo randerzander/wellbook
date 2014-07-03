@@ -1,8 +1,8 @@
 create database if not exists wellbook;
 use wellbook;
 
-drop table if exists wellbook.tmp;
-create external table if not exists wellbook.tmp(
+drop table if exists wellbook.injections;
+create external table if not exists wellbook.injections(
   file_no int,
   uic_number string,
   pool string,
@@ -12,5 +12,4 @@ create external table if not exists wellbook.tmp(
   bbls_salt_water_disposed double,
   average_psi double
 )
-row format delimited fields terminated by '\t'
-lines terminated by '\n';
+stored as orc;

@@ -1,8 +1,8 @@
 create database if not exists wellbook;
 use wellbook;
 
-drop table if exists wellbook.tmp;
-create external table if not exists wellbook.tmp(
+drop table if exists wellbook.production;
+create external table if not exists wellbook.production(
  file_no int,
  perfs string,
  spacing string,
@@ -17,5 +17,4 @@ create external table if not exists wellbook.tmp(
  mcf_sold double,
  vent_flare double
 )
-row format delimited fields terminated by '\t'
-lines terminated by '\n';
+stored as orc;
