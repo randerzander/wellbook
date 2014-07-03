@@ -1,7 +1,14 @@
 import recordhelper as helper
 
-comment_blocks = ['P', 'O']
+#filters blank lines, and lines starting with characters in filter_chars
+def filter_lines(text, filter_chars):
+  return filter(
+     lambda x: len(x.strip()) >= 1 and x.strip()[0] not in filter_chars,\
+     text.split('\n')\
+   )
+
 def parse_metadata(lines):
+  comment_blocks = ['P', 'O']
   metadata = {'curveAliases': [], 'comments': []}
   for line in lines:
     #helper.log(line + '\n')
@@ -11,7 +18,7 @@ def parse_metadata(lines):
     if line[0] == '~':
       block_type = line[1]
       continue
-    if block_type in comment_blocks:
+    if block_type in comment_blocks: #TODO allow comments
       #if block_type in metadata: metadata[block_type].append(line)
       #else: metadata[block_type] = [line]
       continue

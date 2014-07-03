@@ -1,7 +1,7 @@
 import sys, gc
 
 def log(text): sys.stderr.write(text)
-def output(text): sys.stdout.write(text)
+def emit(text): sys.stdout.write(text)
 def process_records(process_record, parse_key, key_prefix):
   key = ''
   rec = ''
@@ -10,8 +10,9 @@ def process_records(process_record, parse_key, key_prefix):
       if key != '': log('Finished read of: ' + key + '\n')
       if rec != '': process_record(key, rec)
       gc.collect()
-      key = parse_key(line.split(key_prefix)[1])
-      #log('Started read of: ' + key + '\n')
+      if key_prefix != '': key = parse_key(line.split(key_prefix)[1])
+      else key = parse_key(line)
+      
       rec = line[line.index('\t')+1:]
     else: rec += line
   if rec != '': process_record(key, rec)
