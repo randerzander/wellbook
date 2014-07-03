@@ -10,6 +10,10 @@ def process_record(filename, record):
   if '~' not in record: #handle malformed LAS files
     helper.log('No proper start of record for %s\n' % (filename))
     return
+  if '~A' not in record:
+    helper.log(filename + ': improperly delimited data block')
+    return
+
   halves = record[record.index('~'):].strip().split('~A')
   metadata = las.parse_metadata(\
     las.sanitize(line.strip('.').strip()) for line in las.filter_lines(halves[0], ['-'])\
@@ -19,6 +23,7 @@ def process_record(filename, record):
     return
 
   #filter blank and lines starting with #, split resulting text into tokens
+  helper.log(str(halves))
   halves[1] = halves[1][halves[1].index('\n'):]
   tokens = '\t'.join(las.filter_lines(halves[1], ['#'])).split()
 
