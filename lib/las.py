@@ -24,7 +24,8 @@ def parse_metadata(lines):
       continue
 
     field = {}
-    if '.' not in line: #if no period, no UOM. value is from end of first word to :
+    if ':' not in line: mnemonic = line.strip()
+    elif '.' not in line: #if no period, no UOM. value is from end of first word to :
       mnemonic = line.split()[0].strip()
       value = line.split(mnemonic)[1].split(':')[0].strip()
     else:
