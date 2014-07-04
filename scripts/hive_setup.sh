@@ -32,7 +32,7 @@ message 'Creating log_metadata table'
 #hive -f ~/wellbook/ddl/log_metadata.ddl
 #populate_table log_metadata las_metadata.py filename,file_no,log_name,metadata las
 message 'Creating log_readings table'
-#hive -f ~/wellbook/ddl/log_readings.ddl
-#populate_table log_readings_tmp las_readings.py filename,file_no,log_name,reading las
+hive -f ~/wellbook/ddl/log_readings.ddl
+populate_table log_readings_tmp las_readings.py filename,file_no,log_name,reading las
 message 'Transferring from log_readings_tmp to log_readings'
 hive -e 'insert overwrite table wellbook.log_readings select * from wellbook.log_readings_tmp;'
