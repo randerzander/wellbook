@@ -22,14 +22,14 @@ def process_record(filename, record):
     helper.log(filename + ': improperly formatted metadata block')
     return
 
-  #filter blank and lines starting with #, split resulting text into tokens
-  helper.log(str(halves))
-  halves[1] = halves[1][halves[1].index('\n'):]
-  tokens = '\t'.join(las.filter_lines(halves[1], ['#'])).split()
-
-  if len(metadata['curveAliases']) < 1:
-    helper.log(filename + ': malformed curve information block\n')
+  try:
+    halves[1] = halves[1][halves[1].index('\n'):]
+    #filter blank and lines starting with #, split resulting text into tokens
+    tokens = '\t'.join(las.filter_lines(halves[1], ['#'])).split()
+  except:
+    helper.log(filename + ': improperly separated into metadata and curve data\n')
     return
+
   if len(tokens) % len(metadata['curveAliases']) != 0:
     helper.log(filename + ': Mismatched token count\n')
     return
