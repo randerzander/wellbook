@@ -1,7 +1,11 @@
 use wellbook;
 
 add jar /home/dev/udfs/brickhouse/target/brickhouse-0.7.0-SNAPSHOT.jar;
+add jar /home/dev/SequenceFileKeyValueInputFormat/target/SequenceFileKeyValueInputFormat-0.1.0-SNAPSHOT.jar;
 source /home/dev/udfs/brickhouse/src/main/resources/brickhouse.hql;
+
+set hive.execution.engine=tez;
+
 
 --Get number of logfiles per well
 select file_no, count(*) from log_metadata group by file_no;
@@ -79,6 +83,31 @@ select * from log_readings
     , ',')
   ) lv as mnemonic
   group by log_metadata.file_no, lv.mnemonic;
-  
+
+--list of all observed mnemonics and their description
+  select distinct lv.mnemonic
+  from log_metadata
+  lateral view explode(
+    split(
+      regexp_replace(
+        get_json_object(metadata, '$.curvealiases'),
+      '"|\\[|\\]', '')
+    , ',')
+  ) lv as mnemonic;
+
+select inner.filename, log_metadata.metadata, collect(inner.reading) as readings
+from (
+  select
+    regexp_replace(filename, '__key', '') as filename,
+    lower(val) as reading
+  from stage
+  lateral view posexplode(
+    split(regexp_replace(stage.text, '\r|\n', ' '), '\\s')
+  ) lv as index, val
+  where length(val) > 1
+) inner 
+join log_metadata on inner.filename = log_metadata.filename
+group by inner.filename, log_metadata.metadata
+;
 
 --yet to come: merge/order/interpolate/step all readings into standard units
