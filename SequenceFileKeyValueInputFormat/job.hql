@@ -10,7 +10,6 @@ drop table if exists stage;
 create external table stage(filename string, text string)
 stored as inputformat 'com.github.randerzander.SequenceFileKeyValueInputFormat'
 outputformat 'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
---location '/user/dev/stage/';
 location '${hiveconf:SOURCE}';
 
 insert overwrite table ${hiveconf:TARGET}

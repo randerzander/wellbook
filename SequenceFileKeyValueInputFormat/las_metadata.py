@@ -11,6 +11,10 @@ def process_record(filename, record):
     helper.log('No proper start of record for %s\n' % (filename))
     return
   halves = record[record.index('~'):].strip().split('~A')
+  if len(halves) < 2:
+    helper.log(filename + ': Improperly separated metadata and data blocks\n')
+    return
+
   metadata = las.parse_metadata(\
     las.sanitize(line.strip('.').strip()) for line in las.filter_lines(halves[0], ['-'])\
   )

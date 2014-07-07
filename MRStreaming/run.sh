@@ -12,7 +12,3 @@ hadoop jar /usr/lib/hadoop-mapreduce/hadoop-streaming-*.jar \
   -mapper "$SCRIPT" \
   -input $INPUTDIR/* \
   -output $OUTPUTDIR/
-
-  #-inputformat org.apache.hadoop.mapred.TextInputFormat \
-  #-D stream.recordreader.compression=gzip \
-  #-inputformat com.hw.formats.NonSplittableFile \
