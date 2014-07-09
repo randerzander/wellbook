@@ -8,7 +8,16 @@ I used the wellindex.csv file to obtain a list of well file numbers (file_no), s
 
 To avoid the HDFS small files problem I used the Apache Mahout seqdirectory tool for combining my textfiles into SequenceFiles: the keys are the filenames and the values are the contents of each textfile.
 
-Then I used a combination of Hive queries and the Python pyquery library for parsing relevant fields out of the raw HTML pages.
+Then I used a combination of Hive queries and the pyquery Python library for parsing relevant fields out of the raw HTML pages.
+
+Tables:
+wellbook.wells -- [well metadata](https://www.dmr.nd.gov/oilgas/feeservices/flatfiles/flatfiles.asp) including geolocation and owner
+wellbook.production -- how much [oil, gas, and water](https://www.dmr.nd.gov/oilgas/feeservices/getwellprod.asp?filenumber=22786) was produced for each well on a monthly basis
+wellbook.auctions -- how much was paid for each parcel of land at [auction](http://www.land.nd.gov/minerals/mineralapps/auctions/auctionhistorysale.aspx)
+wellbook.injections -- how much [fluid and gas](https://www.dmr.nd.gov/oilgas/feeservices/getwellinj.asp?filenumber=5600) was injected into each well (for enhanced oil recovery and disposal purposes)
+wellbook.log_metadata -- metadata for each [LAS well log file](http://pubs.usgs.gov/of/2007/1142/)
+wellbook.log_readings -- sensor readings for each depth step in all [LAS well log files](http://pubs.usgs.gov/of/2007/1142/)
+wellbook.water_sites -- [metadata](http://waterservices.usgs.gov/nwis/site/?stateCd=nd) for water quality monitoring stations in North Dakota
 
 Setup:
 ```
@@ -17,8 +26,9 @@ git clone https://github.com/randerzander/wellbook
 #Prereqs
 sudo wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
 sudo yum groupinstall -y 'development tools'
-#libxslt-devel needs to be installed on all datanodes, python-devel, apache-maven, and mahout just need to be installed on an edgenode
-sudo yum install -y python-devel libxslt-devel apache-maven mahout
+sudo yum install -y apache-maven mahout
+#for python libs
+sudo yum install -y python-devel libxslt-devel blas-devel lapack-devel
 
 #Download and install virtualenv
 wget https://bootstrap.pypa.io/ez_setup.py
@@ -30,6 +40,9 @@ sudo pip install virtualenv
 virtualenv pyenv
 source pyenv/bin/activate
 pip install pyquery
+pip install numpy
+pip install scipy
+pip install scikit-learn
 cp ~/wellbook/lib/recordhelper.py ~/pyenv/lib/python2.6/site-packages/
 deactivate
 virtualenv --relocatable pyenv
