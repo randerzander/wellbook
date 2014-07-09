@@ -11,13 +11,13 @@ To avoid the HDFS small files problem I used the Apache Mahout seqdirectory tool
 Then I used a combination of Hive queries and the pyquery Python library for parsing relevant fields out of the raw HTML pages.
 
 Tables:
-wellbook.wells -- [well metadata](https://www.dmr.nd.gov/oilgas/feeservices/flatfiles/flatfiles.asp) including geolocation and owner
-wellbook.production -- how much [oil, gas, and water](https://www.dmr.nd.gov/oilgas/feeservices/getwellprod.asp?filenumber=22786) was produced for each well on a monthly basis
-wellbook.auctions -- how much was paid for each parcel of land at [auction](http://www.land.nd.gov/minerals/mineralapps/auctions/auctionhistorysale.aspx)
-wellbook.injections -- how much [fluid and gas](https://www.dmr.nd.gov/oilgas/feeservices/getwellinj.asp?filenumber=5600) was injected into each well (for enhanced oil recovery and disposal purposes)
-wellbook.log_metadata -- metadata for each [LAS well log file](http://pubs.usgs.gov/of/2007/1142/)
-wellbook.log_readings -- sensor readings for each depth step in all [LAS well log files](http://pubs.usgs.gov/of/2007/1142/)
-wellbook.water_sites -- [metadata](http://waterservices.usgs.gov/nwis/site/?stateCd=nd) for water quality monitoring stations in North Dakota
+wellbook.wells -- [well metadata](https://www.dmr.nd.gov/oilgas/feeservices/flatfiles/flatfiles.asp) including geolocation and owner  
+wellbook.production -- how much [oil, gas, and water](https://www.dmr.nd.gov/oilgas/feeservices/getwellprod.asp?filenumber=22786) was produced for each well on a monthly basis  
+wellbook.auctions -- how much was paid for each parcel of land at [auction](http://www.land.nd.gov/minerals/mineralapps/auctions/auctionhistorysale.aspx)  
+wellbook.injections -- how much [fluid and gas](https://www.dmr.nd.gov/oilgas/feeservices/getwellinj.asp?filenumber=5600) was injected into each well (for enhanced oil recovery and disposal purposes)  
+wellbook.log_metadata -- metadata for each [LAS well log file](http://pubs.usgs.gov/of/2007/1142/)  
+wellbook.log_readings -- sensor readings for each depth step in all [LAS well log files](http://pubs.usgs.gov/of/2007/1142/)  
+wellbook.water_sites -- [metadata](http://waterservices.usgs.gov/nwis/site/?stateCd=nd) for water quality monitoring stations in North Dakota  
 
 Setup:
 ```
@@ -43,7 +43,7 @@ pip install pyquery
 pip install numpy
 pip install scipy
 pip install scikit-learn
-cp ~/wellbook/lib/recordhelper.py ~/pyenv/lib/python2.6/site-packages/
+cp ~/wellbook/etl/lib/recordhelper.py ~/pyenv/lib/python2.6/site-packages/
 deactivate
 virtualenv --relocatable pyenv
 
