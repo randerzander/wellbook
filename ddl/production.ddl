@@ -13,7 +13,7 @@ create external table if not exists wellbook.production(
  bbls_oil double,
  runs double,
  bbls_water double,
- mcd_prod double,
+ mcf_prod double,
  mcf_sold double,
  vent_flare double
 )

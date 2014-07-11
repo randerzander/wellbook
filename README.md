@@ -10,7 +10,7 @@ To avoid the HDFS small files problem I used the Apache Mahout seqdirectory tool
 
 Then I used a combination of Hive queries and the pyquery Python library for parsing relevant fields out of the raw HTML pages.
 
-Tables:
+Tables:  
 wellbook.wells -- [well metadata](https://www.dmr.nd.gov/oilgas/feeservices/flatfiles/flatfiles.asp) including geolocation and owner  
 wellbook.production -- how much [oil, gas, and water](https://www.dmr.nd.gov/oilgas/feeservices/getwellprod.asp?filenumber=22786) was produced for each well on a monthly basis  
 wellbook.auctions -- how much was paid for each parcel of land at [auction](http://www.land.nd.gov/minerals/mineralapps/auctions/auctionhistorysale.aspx)  

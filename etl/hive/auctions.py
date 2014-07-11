@@ -7,6 +7,7 @@ def emit(fields, cells): helper.emit('%s\n' % ('\t'.join(fields + [cell.text_con
 
 def process_record(key, record):
   record = filter(lambda x: x in string.printable, record)
+  record = record.replace('$', '')
   rows = pq(record.replace('\'', ''))('table').eq(0)('table')('tr')[1:]
   cells = pq(filter(lambda x: len(pq(x)('td')) > 1, rows))('td')
   [emit([key], rec) for rec in [cells[x:x+8] for x in xrange(0, len(cells), 8)]]
