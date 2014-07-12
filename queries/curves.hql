@@ -1,5 +1,7 @@
---list of all observed mnemonics and their description
-select distinct lv.mnemonic
+select * from wells
+join log_readings on
+  
+select collect(distinct lv.mnemonic) as channels
 from log_metadata
 lateral view explode(
   split(
