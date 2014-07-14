@@ -9,7 +9,7 @@ from log_metadata
 lateral view explode(
   split(
     regexp_replace(
-      get_json_object(metadata, '$.curvealiases'),
+      get_json_object(metadata, '$.curvealiases') + ',' + get_json_object(metadata, '$.c.null.value'),
     '"|\\[|\\]', '')
   , ',')
 ) lv as mnemonic;

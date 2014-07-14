@@ -4,18 +4,27 @@ import sys, json
 
 #load local copy of channels
 f = open('channels.txt')
-channels = json.reads(f.read())
+channels = json.loads(f.read())
 
-def emit(file_no, sums, counts): sys.stdout.write(file_no + '\t' + '\t'.join([sum/count for sum, count in zip(sums, counts)]))
+def emit(file_no, sums, counts):
+  averages = {}
+  for idx, channel in enumerate(channels):
+    if counts[idx] > 0: averages[channel] = sums[idx]/counts[idx]
+  sys.stdout.write(file_no + '\t' + json.dumps(averages) + '\n')
 
 file_no = None
 for line in sys.stdin:
-  tokens = line.split('\t')
-  this_file_no, this_reading = tokens[0], json.loads(tokens[1])
-  if file_no == None: file_no, sums, counts = this_file_no, [], []
+  tokens = line.strip().split('\t')
+  this_file_no, null_value, this_reading = tokens[0], tokens[1], json.loads(tokens[2])
+  if file_no == None: file_no, sums, counts = this_file_no, [0]*len(channels), [0]*len(channels)
   elif file_no != this_file_no: #finish this rec, start new rec
     emit(file_no, sums, counts)
-    file_no, sums, counts = this_file_no, [], []
+    sys.stderr.write('Starting read of ' + this_file_no + '\n')
+    file_no, sums, counts = this_file_no, [0]*len(channels), [0]*len(channels)
 
-  for idx, channel in enumerate(channels): if channel in this_reading: sums[idx], counts[idx] = sums[idx] + parseFloat(channel), counts[idx] + 1
+  for idx, channel in enumerate(channels):
+    if channel in this_reading:
+      if this_reading[channel] != null_value:
+        sums[idx], counts[idx] = sums[idx] + float(this_reading[channel]), counts[idx] + 1
+
 emit(file_no, sums, counts)
