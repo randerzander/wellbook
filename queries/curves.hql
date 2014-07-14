@@ -10,7 +10,7 @@ select
   transform(file_no, nullval, reading) using 'merge_depths.py'
     as file_no, averages
 from (
-  select r.file_no, r.reading, get_json_object(m.metadata, '$.c.null.value') as nullval
+  select r.file_no, r.reading, coalesce(get_json_object(m.metadata, '$.c.null.value'), ' ') as nullval
   from log_readings r
   join wells w
     on w.file_no = r.file_no
