@@ -1,3 +1,5 @@
 *.jar
 *.class
 *.swp
+node_modules/
+bower_components/
