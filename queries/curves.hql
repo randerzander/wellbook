@@ -28,6 +28,6 @@ from (
       cast(get_json_object(r.reading, '$.depth') as double),
       cast(get_json_object(r.reading, '$.md') as double)
     ) <= cast(w.td as double) - 1000
-  distribute by r.file_no
+  cluster by r.file_no
 ) i
 ;

@@ -1,18 +1,5 @@
-set hive.execution.engine=tez;
 use wellbook;
-
-
-select * from wells w
-join auctions a on
-  split(w.township, ' ')[0] = a.township;
-
-select * from wells w
-join auctions a on
-  split(w.section, ' ')[0] = a.section;
-
-select * from wells w
-join auctions a on
-  w.range = a.range;
+set hive.execution.engine=tez;
 
 select 
   w.file_no,

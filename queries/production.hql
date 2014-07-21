@@ -1,26 +1,14 @@
 use wellbook;
 set hive.execution.engine=tez;
 
-create table prod_inj_wells as
-select transform(
-  file_no,
-  perfs,
-  spacing,
-  total_depth,
-  pool,
-  bbls_oil,
-  bbls_water,
-  mcf_gas,
-  eor_bbls,
-  eor_mcf,
-  salt_water_disposed,
-  average_psi
-  collect(
-) using 
-
-
-
-select * from (
+create table master stored as orc as
+select
+  w.*,
+  p.perfs, p.spacing, p.pool, p.bbls_oil, p.mcf_gas, p.bbls_water,
+  i.eor_bbls, i.eor_mcf, i.salt_water_disposed, i.average_psi,
+  a.lease_no, a.date, a.bonus_per_acre, a.acres,
+  d.averages
+from (
   select
     file_no,
     perfs,
@@ -43,10 +31,14 @@ left outer join (
   from injections
   group by file_no
 ) i on p.file_no = i.file_no
+--left outer join total_depth_environments d
+join total_depth_environments d
+  on p.file_no = d.file_no
 join wells w on
   p.file_no = w.file_no
-join 
+left outer join (
+  select auctions.* from auctions
+  join (select lease_no, max(unix_timestamp(date, 'MM-yyyy')) from auctions group by lease_no) b
+    on auctions.lease_no = b.lease_no
+) a on (split(w.township, ' ')[0] = a.township and split(w.range, ' ')[0] = a.range and w.section = a.section)
 ;
-
-
-select * from log_readings where 
