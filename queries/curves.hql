@@ -5,7 +5,8 @@ add file channels.txt;
 
 set hive.execution.engine=tez;
 
-insert overwrite table total_depth_environments
+drop table if exists total_depth_environments;
+create table total_depth_environments stored as orc as
 select 
   transform(file_no, nullval, reading) using 'merge_depths.py'
     as file_no, averages

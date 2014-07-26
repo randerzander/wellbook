@@ -19,7 +19,7 @@ function populate_table(){
 }
 
 message 'Creating wells table'
-#hive -f ~/wellbook/ddl/wells.ddl
+hive -f ~/wellbook/ddl/wells.ddl
 message 'Creating water_sites table'
 hive -f ~/wellbook/ddl/water_sites.ddl
 
@@ -29,14 +29,14 @@ workflow production production.py file_no,perfs,spacing,total_depth,pool,date,da
 workflow injections injections.py file_no,uic_number,pool,date,eor_bbls_injected,eor_mcf_injected,bbls_salt_water_disposed,average_psi
 workflow auctions auctions.py date,lease_no,township,range,section,description,bidder,acres,bonus_per_acre
 
-#message 'Converting las files to SequenceFiles'
-#mahout seqdirectory -i wellbook/las_raw -o wellbook/las_seq -prefix __key -ow
+message 'Converting las files to SequenceFiles'
+mahout seqdirectory -i wellbook/las_raw -o wellbook/las_seq -prefix __key -ow
 
-#message 'Creating log_metadata table'
-#hive -f ~/wellbook/ddl/log_metadata.ddl
-#populate_table log_metadata las_metadata.py filename,file_no,log_name,metadata las
-#message 'Creating log_readings table'
-#hive -f ~/wellbook/ddl/log_readings.ddl
-#populate_table log_readings_tmp las_readings.py filename,file_no,log_name,reading las
-#message 'Transferring from log_readings_tmp to log_readings'
-#hive -e 'insert overwrite table wellbook.log_readings select * from wellbook.log_readings_tmp;'
+message 'Creating log_metadata table'
+hive -f ~/wellbook/ddl/log_metadata.ddl
+populate_table log_metadata las_metadata.py filename,file_no,log_name,metadata las
+message 'Creating log_readings table'
+hive -f ~/wellbook/ddl/log_readings.ddl
+populate_table log_readings_tmp las_readings.py filename,file_no,log_name,reading las
+message 'Transferring from log_readings_tmp to log_readings'
+hive -e 'insert overwrite table wellbook.log_readings select * from wellbook.log_readings_tmp;'
