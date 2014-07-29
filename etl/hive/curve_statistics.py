@@ -1,11 +1,15 @@
-#!/usr/bin/python
+#!./pyenv/bin/python
 
-import sys, json
+import sys, json, numpy
 
 def emit(file_no, channels):
   averages = {}
-  for channel, obj in channels.iteritems(): averages[channel] = obj['sum']/obj['counts']
+  for channel, readings in channels.iteritems():
+    arr = numpy.array(readings)
+    averages[channel] = {'mean': numpy.mean(arr), 'median': numpy.median(arr), 'std': numpy.std(arr), 'count': len(arr)}
   sys.stdout.write(file_no + '\t' + json.dumps(averages) + '\n')
+
+def is_ascii(s): return all(ord(c) < 128 for c in s)
 
 file_no = None
 channels = {}
@@ -22,12 +26,11 @@ for line in sys.stdin:
     try:
       val = float(reading[:20])
       if val == null_value: continue
-      if channel in channels:
-        channels[channel]['counts'] += 1
-        channels[channel]['sum'] += val
-      else: channels[channel] = {'counts': 1, 'sum': val}
+      if channel in channels: channels[channel].append(val)
+      else: channels[channel] = [val]
     except:
-      sys.stderr.write('Err converting ' + channel + ', ' + reading + '\n')
+      #sys.stderr.write('Err converting ' + channel + ', ' + reading + '\n')
+      sys.stderr.write(file_no + ' err converting\n')
       continue
       
   if file_no == None: file_no, channels  = this_file_no, {}

@@ -31,8 +31,7 @@ left outer join (
   from injections
   group by file_no
 ) i on p.file_no = i.file_no
---left outer join total_depth_environments d
-join total_depth_environments d
+left outer join total_depth_environments d
   on p.file_no = d.file_no
 join wells w on
   p.file_no = w.file_no

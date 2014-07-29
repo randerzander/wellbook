@@ -1,18 +1,18 @@
 use wellbook;
 
 add file /home/dev/wellbook/etl/hive/merge_depths.py;
-add file channels.txt;
-
-set hive.execution.engine=tez;
+add file /home/dev/pyenv;
+--set hive.execution.engine=tez;
 
 drop table if exists total_depth_environments;
 create table total_depth_environments stored as orc as
 select 
   transform(file_no, nullval, reading) using 'merge_depths.py'
-    as file_no, averages
+  as file_no, averages
 from (
-  select r.file_no, r.reading, coalesce(get_json_object(m.metadata, '$.c.null.value'), ' ') as nullval
+  select r.file_no, r.reading, coalesce(get_json_object(m.metadata, '$.w.null.value'), '-999.25') as nullval
   from log_readings r
+  --from test r
   join wells w
     on w.file_no = r.file_no
   join log_metadata m
@@ -31,4 +31,5 @@ from (
     ) <= cast(w.td as double) - 1000
   cluster by r.file_no
 ) i
+where cast(nullval as double) is not null
 ;
