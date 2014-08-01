@@ -1,7 +1,8 @@
 use wellbook;
 set hive.execution.engine=tez;
 
-create table master stored as orc as
+drop table if exists master;
+create table if not exists master stored as orc as
 select
   w.*,
   p.perfs, p.spacing, p.pool, p.bbls_oil, p.mcf_gas, p.bbls_water,
