@@ -30,17 +30,28 @@ def process_record(filename, record):
     helper.log(filename + ': improperly separated into metadata and curve data\n')
     return
 
+  print(metadata)
   if len(tokens) % len(metadata['curveAliases']) != 0:
     helper.log(filename + ': Mismatched token count\n')
     return
 
   readings = iter(tokens)
+
+  if 'W' not in metadata:
+    if 'NULL' in metadata['V']: null_val = metadata['V']['NULL']['value']
+    else: null_val = '-99.25'
+  else: null_val = metadata['W']['NULL']['value']
+  
+  curve_aliases = metadata['curveAliases']
+  step_type = curve_aliases[0]
   while True: #TODO handle timestamps
-    step = {}
-    try: #iterate through enough tokens to fill the step and emit as Hive record
-      for alias in metadata['curveAliases']: step[alias] = readings.next()
-      helper.emit('%s\t%s\n' % (filename, json.dumps(step).lower()))
-      step = {}
+    try:
+      step_readings = []
+      for x in range(0, len(curve_aliases)): step_readings.append(readings.next())
+      for idx, reading in enumerate(step_readings[1:]):
+        if reading != null_val:
+          try: helper.emit('%s\t%s\t%s\t%s\t%s\t%s\n' % (filename, step_type, step_readings[0], curve_aliases[idx+1], metadata['C'][curve_aliases[idx+1]].get('UOM', ''), float(reading)))
+          except: continue
     except StopIteration: return
       
 helper.process_records(process_record, las.parse_filename, '__key')

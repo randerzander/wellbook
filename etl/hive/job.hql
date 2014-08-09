@@ -1,6 +1,6 @@
 use wellbook;
 
-set hive.execution.engine=tez;
+--set hive.execution.engine=tez;
 
 add jar /home/dev/SequenceFileKeyValueInputFormat/target/SequenceFileKeyValueInputFormat-0.1.0-SNAPSHOT.jar;
 add file /home/dev/pyenv;

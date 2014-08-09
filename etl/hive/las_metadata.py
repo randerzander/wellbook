@@ -21,6 +21,10 @@ def process_record(filename, record):
   if len(metadata['curveAliases']) < 1:
     helper.log(filename + ': Improperly formatted metadata\n')
     return
-  helper.emit('%s\n' % (filename + '\t' + json.dumps(metadata).lower()))
+  for block in ['V', 'W', 'C']:
+    if block in metadata:
+      for mnemonic, val in metadata[block].iteritems():
+        helper.emit('%s\t%s\t%s\t%s\t%s\n' % \
+          (filename, block, mnemonic, val.get('UOM', ''), val.get('description', '')))
 
 helper.process_records(process_record, las.parse_filename, '__key')

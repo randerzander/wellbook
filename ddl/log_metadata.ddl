@@ -6,6 +6,9 @@ create external table if not exists wellbook.log_metadata(
   filename string,
   file_no int,
   log_name string,
-  metadata string
+  block string,
+  mnemonic string,
+  uom string,
+  description string
 )
 stored as orc;

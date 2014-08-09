@@ -1,14 +1,15 @@
 create database if not exists wellbook;
 use wellbook;
 
-drop table if exists wellbook.log_readings_tmp;
-create external table if not exists wellbook.log_readings_tmp(
+drop table if exists wellbook.log_readings;
+create external table if not exists wellbook.log_readings(
   filename string,
   file_no int,
   log_name string,
-  reading string
+  step_type string,
+  step double,
+  mnemonic string,
+  uom string,
+  reading double
 )
-stored as textfile;
-
-create external table if not exists wellbook.log_readings like wellbook.log_readings_tmp;
-alter table log_readings set fileformat orc;
+stored as orc;
