@@ -54,11 +54,6 @@ mvn package
 
 #Download and build necessary Hive UDFs
 mkdir ~/udfs
-git clone https://github.com/klout/brickhouse.git
-mv brickhouse ~/udfs/
-cd ~/udfs/brickhouse
-mvn package
-
 git clone https://github.com/Esri/spatial-framework-for-hadoop
 mv spatial-framework-for-hadoop ~/udfs/
 cd ~/udfs/spatial-framework-for-hadoop
