@@ -25,8 +25,9 @@ message 'Creating water_sites table'
 
 cp ~/wellbook/etl/lib/* ~/pyenv/lib/python2.6/site-packages/
 cd ~/wellbook/etl/hive
-#workflow production production.py file_no,perfs,spacing,total_depth,pool,date,days,bbls_oil,runs,bbls_water,mcd_prod,mcf_sold,vent_flare
-#workflow injections injections.py file_no,uic_number,pool,date,eor_bbls_injected,eor_mcf_injected,bbls_salt_water_disposed,average_psi
+workflow production production.py file_no,perfs,spacing,total_depth,pool,date,days,bbls_oil,runs,bbls_water,mcd_prod,mcf_sold,vent_flare
+workflow injections injections.py file_no,uic_number,pool,date,eor_bbls_injected,eor_mcf_injected,bbls_salt_water_disposed,average_psi
+workflow scout_links scout_links.py file_no,link
 #workflow auctions auctions.py date,lease_no,township,range,section,description,bidder,acres,bonus_per_acre
 
 message 'Converting las files to SequenceFiles'
