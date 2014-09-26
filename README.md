@@ -30,7 +30,7 @@ sudo yum install -y apache-maven mahout
 #for python libs
 sudo yum install -y python-devel libxslt-devel blas-devel lapack-devel gcc-gfortran
 export JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk.x86_64/bin
-echo export /usr/lib/jvm/java-1.6.0-openjdk.x86_64/bin >> ~/.bashrc
+echo export JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk.x86_64/bin >> ~/.bashrc
 
 #Download and install virtualenv
 wget https://bootstrap.pypa.io/ez_setup.py
