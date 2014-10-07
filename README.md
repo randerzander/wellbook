@@ -18,9 +18,9 @@ wellbook.auctions -- how much was paid for each parcel of land at [auction](http
 wellbook.injections -- how much [fluid and gas](https://www.dmr.nd.gov/oilgas/feeservices/getwellinj.asp?filenumber=5600) was injected into each well (for enhanced oil recovery and disposal purposes)  
 wellbook.log_metadata -- metadata for each [LAS well log file](http://pubs.usgs.gov/of/2007/1142/)  
 wellbook.log_readings -- sensor readings for each depth step in all [LAS well log files](http://pubs.usgs.gov/of/2007/1142/)  
-wellbook.log_key -- [map](https://www.dmr.nd.gov/oilgas/feeservices/flatfiles/flatfiles.asp) of log mnemonics to their descriptions
-wellbook.formations -- manually annotated [map](https://www.dmr.nd.gov/oilgas/feeservices/flatfiles/flatfiles.asp) of well depths to rock formations
-wellbook.formations_key -- [Descriptions](https://www.dmr.nd.gov/oilgas/feeservices/flatfiles/flatfiles.asp) of rock formations
+wellbook.log_key -- [map](https://www.dmr.nd.gov/oilgas/feeservices/flatfiles/flatfiles.asp) of log mnemonics to their descriptions  
+wellbook.formations -- manually annotated [map](https://www.dmr.nd.gov/oilgas/feeservices/flatfiles/flatfiles.asp) of well depths to rock formations  
+wellbook.formations_key -- [Descriptions](https://www.dmr.nd.gov/oilgas/feeservices/flatfiles/flatfiles.asp) of rock formations  
 wellbook.water_sites -- [metadata](http://waterservices.usgs.gov/nwis/site/?stateCd=nd) for water quality monitoring stations in North Dakota  
 
 Setup:
