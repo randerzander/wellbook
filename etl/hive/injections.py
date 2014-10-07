@@ -13,8 +13,8 @@ def extract_fields(fields, text):
 
 def emit(fields, cells):
   #Print tab separated list of fields concatted with array of extracted cell values
-  helper.emit('%s\n' % ('\t'.join(fields + \
-    [cell.text_content() for cell in cells])))
+  helper.emit('\t'.join(fields + [cell.text_content() for cell in cells]))
+    
 
 def process_rec(key, rec):
   if 'Average PSI' in rec:

@@ -1,7 +1,7 @@
 create database if not exists wellbook;
 use wellbook;
 
-add jar /home/dev/serdes/csv-serde/target/csv-serde-1.1.2-0.11.0-all.jar;
+add jar /home/dev/wellbook/serdes/csv-serde/target/csv-serde-1.1.2-0.11.0-all.jar;
 
 drop table if exists wellbook.tmp;
 create external table if not exists wellbook.tmp (

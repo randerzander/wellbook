@@ -1,7 +1,7 @@
 create database if not exists wellbook;
 use wellbook;
 
-add jar /home/dev/serdes/csv-serde/target/csv-serde-1.1.2-0.11.0-all.jar;
+add jar /home/dev/wellbook/serdes/csv-serde/target/csv-serde-1.1.2-0.11.0-all.jar;
 
 drop table if exists wellbook.tmp;
 create external table if not exists wellbook.tmp(
@@ -80,10 +80,10 @@ create external table if not exists wellbook.tmp(
 )
 row format serde 'com.bizo.hive.serde.csv.CSVSerde'
 stored as textfile
-location '/user/dev/wellbook/logtops_raw/';
+location '/user/dev/wellbook/formations_raw/';
 
-drop table if exists wellbook.log_tops;
-create table wellbook.log_tops like wellbook.tmp;
-alter table log_tops set fileformat orc;
-insert into table wellbook.log_tops select * from wellbook.tmp;
+drop table if exists wellbook.formations;
+create table wellbook.formations like wellbook.tmp;
+alter table formations set fileformat orc;
+insert into table wellbook.formations select * from wellbook.tmp;
 drop table wellbook.tmp;

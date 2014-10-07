@@ -11,7 +11,7 @@ def extract_fields(fields, text):
   return vals
 
 #Print tab separated list of fields concatted with array of extracted cell values
-def emit(fields, cells): helper.emit('%s\n' % ('\t'.join(fields + [cell.text_content() for cell in cells])))
+def emit(fields, cells): helper.emit('\t'.join(fields + [cell.text_content() for cell in cells]))
 
 def process_rec(key, rec):
   if 'Vent/Flare' in rec:

@@ -7,33 +7,22 @@ import json, las
 import recordhelper as helper
 
 def process_record(filename, record):
-  if '~' not in record: #handle malformed LAS files
-    helper.log('No proper start of record for %s\n' % (filename))
-    return
-  if '~A' not in record:
-    helper.log(filename + ': improperly delimited data block')
-    return
+  if '~' not in record: return 'No proper start of record'
+  if '~A' not in record: return 'No delimited data block'
 
   halves = record[record.index('~'):].strip().split('~A')
   metadata = las.parse_metadata(\
     las.sanitize(line.strip('.').strip()) for line in las.filter_lines(halves[0], ['-'])\
   )
-  if len(metadata['curveAliases']) < 1:
-    helper.log(filename + ': improperly formatted metadata block')
-    return
+  if len(metadata['curveAliases']) < 1: return 'bad format in metadata block'
 
   try:
     halves[1] = halves[1][halves[1].index('\n'):]
     #filter blank and lines starting with #, split resulting text into tokens
     tokens = '\t'.join(las.filter_lines(halves[1], ['#'])).split()
-  except:
-    helper.log(filename + ': improperly separated into metadata and curve data\n')
-    return
+  except: return 'bad separation between metadata and curve data'
 
-  print(metadata)
-  if len(tokens) % len(metadata['curveAliases']) != 0:
-    helper.log(filename + ': Mismatched token count\n')
-    return
+  if len(tokens) % len(metadata['curveAliases']) != 0: return 'mismatched reading count'
 
   readings = iter(tokens)
 
@@ -50,7 +39,7 @@ def process_record(filename, record):
       for x in range(0, len(curve_aliases)): step_readings.append(readings.next())
       for idx, reading in enumerate(step_readings[1:]):
         if reading != null_val:
-          try: helper.emit('%s\t%s\t%s\t%s\t%s\t%s\n' % (filename, step_type, step_readings[0], curve_aliases[idx+1], metadata['C'][curve_aliases[idx+1]].get('UOM', ''), float(reading)))
+          try: helper.emit('%s\t%s\t%s\t%s\t%s\t%s' % (filename, step_type, step_readings[0], curve_aliases[idx+1], metadata['C'][curve_aliases[idx+1]].get('UOM', ''), float(reading)))
           except: continue
     except StopIteration: return
       

@@ -3,7 +3,7 @@ from pyquery import PyQuery as pq
 import recordhelper as helper
 import string
 
-def emit(fields, cells): helper.emit('%s\n' % ('\t'.join(fields + [cell.text_content() for cell in cells])))
+def emit(fields, cells): helper.emit('\t'.join(fields + [cell.text_content() for cell in cells]))
 
 def process_record(key, record):
   record = filter(lambda x: x in string.printable, record)

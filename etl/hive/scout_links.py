@@ -12,8 +12,7 @@ def extract_fields(fields, text):
       vals.append('null')                                                                             
   return vals
 
-def emit(fields, text):                                                                               
-  helper.emit('%s\n' % ('\t'.join(fields + [text])))                                                  
+def emit(fields, text): helper.emit('\t'.join(fields + [text]))
 
 def process_rec(key, rec):                                                                            
   base = 'https://www.dmr.nd.gov'

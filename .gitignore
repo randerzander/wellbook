@@ -1,3 +1,7 @@
 *.jar
 *.class
 *.swp
+udfs/
+serdes/
+pyenv/
+SequenceFileKeyValueInputFormat/
