@@ -6,6 +6,12 @@
 import json, las
 import recordhelper as helper
 
+def get_nulls(metadata): # W or V blocks define null calibrated readings
+  for block in ['W', 'V']:
+    try: return [float(metadata[block]['NULL']['value'])]
+    except: pass
+  return [-99.25, -999.25] # Default null calibration values
+
 def process_record(filename, record):
   if '~' not in record: return 'No proper start of record'
   if '~A' not in record: return 'No delimited data block'
@@ -24,23 +30,14 @@ def process_record(filename, record):
 
   if len(tokens) % len(metadata['curveAliases']) != 0: return 'mismatched reading count'
 
-  readings = iter(tokens)
-
-  if 'W' not in metadata:
-    if 'NULL' in metadata['V']: null_val = metadata['V']['NULL']['value']
-    else: null_val = '-99.25'
-  else: null_val = metadata['W']['NULL']['value']
-  
+  null_vals = get_nulls(metadata)
   curve_aliases = metadata['curveAliases']
   step_type = curve_aliases[0]
-  while True: #TODO handle timestamps
+  for idx in xrange(0, len(tokens), len(curve_aliases)): # idx is index of first reading on a step
+    step_values = tokens[idx : idx + len(curve_aliases)] # get all readings for the next step
     try:
-      step_readings = []
-      for x in range(0, len(curve_aliases)): step_readings.append(readings.next())
-      for idx, reading in enumerate(step_readings[1:]):
-        if reading != null_val:
-          try: helper.emit('%s\t%s\t%s\t%s\t%s\t%s' % (filename, step_type, step_readings[0], curve_aliases[idx+1], metadata['C'][curve_aliases[idx+1]].get('UOM', ''), float(reading)))
-          except: continue
-    except StopIteration: return
-      
+      for idy, reading in enumerate(filter(lambda x: float(x) not in null_vals, step_values)[1:]):
+        helper.emit('\t'.join([filename, step_type, step_values[0], curve_aliases[idy], metadata['C'][curve_aliases[idy]].get('UOM', ''), reading]))
+    except ValueError: pass
+
 helper.process_records(process_record, las.parse_filename, '__key')
